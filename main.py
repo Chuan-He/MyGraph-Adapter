@@ -1,4 +1,5 @@
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 import random
 import argparse
 import yaml
@@ -165,6 +166,7 @@ def main():
     torch.manual_seed(1)
     
     print("Preparing dataset.")
+    cfg['root_path'] = "../DATA"
     dataset = build_dataset(cfg['dataset'], cfg['root_path'], cfg['shots'])
 
     val_loader = build_data_loader(data_source=dataset.val, batch_size=64, is_train=False, tfm=preprocess, shuffle=False)

@@ -127,3 +127,15 @@ def search_hp(cfg, cache_keys, cache_values, features, labels, clip_weights, ada
         print("\nAfter searching, the best accuarcy: {:.2f}.\n".format(best_acc))
 
     return best_beta, best_alpha
+
+class IOStream():
+    def __init__(self, path):
+        self.f = open(path, 'a')
+
+    def cprint(self, text):
+        print(text)
+        self.f.write(text+'\n')
+        self.f.flush()
+
+    def close(self):
+        self.f.close()

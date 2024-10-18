@@ -10,6 +10,8 @@ import torch
 from torch.utils.data import Dataset as TorchDataset
 import torchvision.transforms as T
 from PIL import Image
+import numpy as np
+from AGNN.sampler import *
 
 
 def read_json(fpath):
@@ -279,7 +281,7 @@ class DatasetBase:
 
         return output
 
-
+    
 class DatasetWrapper(TorchDataset):
     def __init__(self, data_source, input_size, transform=None, is_train=False,
                  return_img0=False, k_tfm=1):
@@ -350,7 +352,6 @@ class DatasetWrapper(TorchDataset):
 
         return img
 
-
 def build_data_loader(
     data_source=None,
     batch_size=64,
@@ -371,6 +372,32 @@ def build_data_loader(
         num_workers=8,
         shuffle=shuffle,
         drop_last=False,
+        pin_memory=(torch.cuda.is_available())
+    )
+    assert len(data_loader) > 0
+
+    return data_loader
+
+def build_data_loader1(
+    data_source=None,
+    batch_sampler=None,
+    input_size=224,
+    tfm=None,
+    is_train=True,
+    dataset_wrapper=None,
+):
+
+    if dataset_wrapper is None:
+        dataset_wrapper = DatasetWrapper
+   
+    # Build data loader
+    data_loader = torch.utils.data.DataLoader(
+        dataset_wrapper(data_source, input_size=input_size, transform=tfm, is_train=is_train),
+        # batch_size=batch_size,
+        batch_sampler=batch_sampler,
+        num_workers=8,
+        # shuffle=shuffle,
+        # drop_last=False,
         pin_memory=(torch.cuda.is_available())
     )
     assert len(data_loader) > 0
